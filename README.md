@@ -84,37 +84,31 @@ graph LR
 | Progress hidden in branches | **Transparent audit trail** in GitHub |
 | Manual task coordination | **Intelligent prioritization** with `/pm:next` |
 
-## Why GitHub Issues?
+## Why Taskwarrior?
 
-Most Claude Code workflows operate in isolation – a single developer working with AI in their local environment. This creates a fundamental problem: **AI-assisted development becomes a silo**.
+We use **Taskwarrior** for local-first task management:
 
-By using GitHub Issues as our database, we unlock something powerful:
+### 🚀 **Local-First Development**
+- All task data stored locally
+- No dependency on external services
+- Works with any git hosting platform
+- Full control over your data
 
-### 🤝 **True Team Collaboration**
-- Multiple Claude instances can work on the same project simultaneously
-- Human developers see AI progress in real-time through issue comments
-- Team members can jump in anywhere – the context is always visible
-- Managers get transparency without interrupting flow
+### 🔍 **Powerful Querying**
+- Rich filter and search capabilities
+- Cross-project unified view
+- Custom tags and attributes
+- Fast command-line interface
 
-### 🔄 **Seamless Human-AI Handoffs**
-- AI can start a task, human can finish it (or vice versa)
-- Progress updates are visible to everyone, not trapped in chat logs
-- Code reviews happen naturally through PR comments
-- No "what did the AI do?" meetings
-
-### 📈 **Scalable Beyond Solo Work**
-- Add team members without onboarding friction
-- Multiple AI agents working in parallel on different issues
-- Distributed teams stay synchronized automatically
-- Works with existing GitHub workflows and tools
+### 🤝 **Team Collaboration (Optional)**
+- Can export/sync to GitHub Issues when needed
+- Human-readable task files in git
+- Works with existing GitHub workflows via scripts
 
 ### 🎯 **Single Source of Truth**
-- No separate databases or project management tools
-- Issue state is the project state
-- Comments are the audit trail
-- Labels provide organization
-
-This isn't just a project management system – it's a **collaboration protocol** that lets humans and AI agents work together at scale, using infrastructure your team already trusts.
+- Task state stored in Taskwarrior database
+- Markdown files for documentation and context
+- Seamless integration with git workflow
 
 ## Core Principle: No Vibe Coding
 
@@ -226,11 +220,15 @@ Specialized agents implement tasks while maintaining progress updates and an aud
 ### Issue Commands
 - `/pm:issue-show` - Display issue and sub-issues
 - `/pm:issue-status` - Check issue status
-- `/pm:issue-start` - Begin work with specialized agent
-- `/pm:issue-sync` - Push updates to GitHub
-- `/pm:issue-close` - Mark issue as complete
+- `/pm:issue-start` - ~~Begin work with specialized agent~~ *(Deprecated - use `/pm:task-start`)*
+- `/pm:issue-sync` - ~~Push updates to GitHub~~ *(Deprecated - use taskwarrior directly)*
+- `/pm:issue-close` - ~~Mark issue as complete~~ *(Deprecated - use `/pm:task-done`)*
 - `/pm:issue-reopen` - Reopen closed issue
 - `/pm:issue-edit` - Edit issue details
+
+### Task Commands
+- `/pm:task-start` - Begin work on a task
+- `/pm:task-done` - Mark task as complete
 
 ### Workflow Commands
 - `/pm:next` - Show next priority issue with epic context
