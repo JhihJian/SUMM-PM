@@ -53,6 +53,23 @@ else
   gh auth login
 fi
 
+# Check for Taskwarrior
+echo ""
+echo "📋 Checking Taskwarrior..."
+if command -v task &> /dev/null; then
+  echo "  ✅ Taskwarrior found: $(task --version)"
+else
+  echo "  ⚠️ Taskwarrior not found. Install it for task tracking:"
+  echo "     • Ubuntu/Debian: sudo apt install taskwarrior"
+  echo "     • macOS: brew install taskwarrior"
+  echo "     • Visit: https://taskwarrior.org/download/"
+  echo ""
+  read -p "Continue without Taskwarrior? (yes/no): " continue
+  if [ "$continue" != "yes" ]; then
+    exit 1
+  fi
+fi
+
 # Check for gh-sub-issue extension
 echo ""
 echo "📦 Checking gh extensions..."
