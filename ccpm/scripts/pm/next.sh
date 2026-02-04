@@ -1,65 +1,61 @@
 #!/bin/bash
-echo "Getting status..."
-echo ""
-echo ""
+# Show next available tasks using Taskwarrior
 
+echo ""
 echo "📋 Next Available Tasks"
 echo "======================="
 echo ""
 
-# Find tasks that are open and have no dependencies or whose dependencies are closed
-found=0
+# Check if Taskwarrior is available
+if ! command -v task &> /dev/null; then
+  echo "❌ Taskwarrior not found. Install it first:"
+  echo "   • Ubuntu/Debian: sudo apt install taskwarrior"
+  echo "   • macOS: brew install taskwarrior"
+  echo "   • Or visit: https://taskwarrior.org/download/"
+  echo ""
+  echo "Falling back to file-based scan..."
+  echo ""
 
-for epic_dir in .claude/epics/*/; do
-  [ -d "$epic_dir" ] || continue
-  epic_name=$(basename "$epic_dir")
+  # Fallback to original behavior
+  for epic_dir in .claude/epics/*/; do
+    [ -d "$epic_dir" ] || continue
+    epic_name=$(basename "$epic_dir")
 
-  for task_file in "$epic_dir"/[0-9]*.md; do
-    [ -f "$task_file" ] || continue
+    for task_file in "$epic_dir"/[0-9]*.md; do
+      [ -f "$task_file" ] || continue
 
-    # Check if task is open
-    status=$(grep "^status:" "$task_file" | head -1 | sed 's/^status: *//')
-    if [ "$status" != "open" ] && [ -n "$status" ]; then
-      continue
-    fi
+      status=$(grep "^status:" "$task_file" | head -1 | sed 's/^status: *//')
+      if [ "$status" != "open" ] && [ -n "$status" ]; then
+        continue
+      fi
 
-    # Check dependencies
-    # Extract dependencies from task file
-    deps_line=$(grep "^depends_on:" "$task_file" | head -1)
-    if [ -n "$deps_line" ]; then
-      deps=$(echo "$deps_line" | sed 's/^depends_on: *//')
-      deps=$(echo "$deps" | sed 's/^\[//' | sed 's/\]$//')
-      # Trim whitespace and handle empty cases
-      deps=$(echo "$deps" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-      [ -z "$deps" ] && deps=""
-    else
-      deps=""
-    fi
+      deps_line=$(grep "^depends_on:" "$task_file" | head -1)
+      if [ -n "$deps_line" ]; then
+        deps=$(echo "$deps_line" | sed 's/^depends_on: *//' | sed 's/^\[//' | sed 's/\]$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        [ -z "$deps" ] || [ "$deps" = "depends_on:" ] && deps="" || continue
+      fi
 
-    # If no dependencies or empty, task is available
-    if [ -z "$deps" ] || [ "$deps" = "depends_on:" ]; then
       task_name=$(grep "^name:" "$task_file" | head -1 | sed 's/^name: *//')
       task_num=$(basename "$task_file" .md)
-      parallel=$(grep "^parallel:" "$task_file" | head -1 | sed 's/^parallel: *//')
 
       echo "✅ Ready: #$task_num - $task_name"
       echo "   Epic: $epic_name"
-      [ "$parallel" = "true" ] && echo "   🔄 Can run in parallel"
       echo ""
-      ((found++))
-    fi
+    done
   done
-done
 
-if [ $found -eq 0 ]; then
-  echo "No available tasks found."
-  echo ""
-  echo "💡 Suggestions:"
-  echo "  • Check blocked tasks: /pm:blocked"
-  echo "  • View all tasks: /pm:epic-list"
+  exit 0
 fi
 
-echo ""
-echo "📊 Summary: $found tasks ready to start"
+# Use Taskwarrior if available
+# Show ready tasks (pending, not blocked, dependencies satisfied)
+task rc.report.next.columns=id,description,epic,status,project \
+    rc.report.next.labels=ID,Description,Epic,Status,Project \
+    +PENDING +READY 2>/dev/null || task +PENDING +READY
 
-exit 0
+echo ""
+echo "💡 Tips:"
+echo "  • Start a task: /pm:task-start <id>"
+echo "  • Filter by project: task project:myapp list"
+echo "  • Filter by type: task +bug, task +feature"
+echo ""
