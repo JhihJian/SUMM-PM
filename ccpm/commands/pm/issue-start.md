@@ -4,6 +4,11 @@ allowed-tools: Bash, Read, Write, LS, Task
 
 # Issue Start
 
+> **⚠️ DEPRECATED:** This command is deprecated in favor of Taskwarrior-based workflow.
+> Use `/pm:task-start` instead of `/pm:issue-start`
+> Use `/pm:task-done` instead of `/pm:issue-close`
+> Use `task` commands directly for queries
+
 Begin work on a GitHub issue with parallel agents based on work stream analysis.
 
 ## Usage

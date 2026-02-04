@@ -4,6 +4,11 @@ allowed-tools: Bash, Read, Write, LS
 
 # Issue Sync
 
+> **⚠️ DEPRECATED:** This command is deprecated in favor of Taskwarrior-based workflow.
+> Use `/pm:task-start` instead of `/pm:issue-start`
+> Use `/pm:task-done` instead of `/pm:issue-close`
+> Use `task` commands directly for queries
+
 Push local updates as GitHub issue comments for transparent audit trail.
 
 ## Usage

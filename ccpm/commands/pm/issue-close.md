@@ -4,6 +4,11 @@ allowed-tools: Bash, Read, Write, LS
 
 # Issue Close
 
+> **⚠️ DEPRECATED:** This command is deprecated in favor of Taskwarrior-based workflow.
+> Use `/pm:task-start` instead of `/pm:issue-start`
+> Use `/pm:task-done` instead of `/pm:issue-close`
+> Use `task` commands directly for queries
+
 Mark an issue as complete and close it on GitHub.
 
 ## Usage
