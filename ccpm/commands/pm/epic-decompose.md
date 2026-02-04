@@ -88,7 +88,7 @@ name: [Task Title]
 status: open
 created: [Current ISO date/time]
 updated: [Current ISO date/time]
-github: [Will be updated when synced to GitHub]
+taskwarrior_id: [Set after task creation]
 depends_on: []  # List of task numbers this depends on, e.g., [001, 002]
 parallel: true  # Can this run in parallel with other tasks?
 conflicts_with: []  # Tasks that modify same files, e.g., [003, 004]
@@ -142,13 +142,13 @@ Save tasks as: `.claude/epics/$ARGUMENTS/{task_number}.md`
 - **conflicts_with**: List task numbers that modify the same files (helps coordination)
 
 ### 5. Task Types to Consider
-- **Setup tasks**: Environment, dependencies, scaffolding
-- **Data tasks**: Models, schemas, migrations
-- **API tasks**: Endpoints, services, integration
-- **UI tasks**: Components, pages, styling
-- **Testing tasks**: Unit tests, integration tests
-- **Documentation tasks**: README, API docs
-- **Deployment tasks**: CI/CD, infrastructure
+- **Setup tasks**: Environment, dependencies, scaffolding (+setup)
+- **Data tasks**: Models, schemas, migrations (+data)
+- **API tasks**: Endpoints, services, integration (+api)
+- **UI tasks**: Components, pages, styling (+ui)
+- **Testing tasks**: Unit tests, integration tests (+test)
+- **Bug fixes**: Bug fixes, crash fixes (+bug)
+- **Documentation tasks**: README, API docs (+docs)
 
 ### 6. Parallelization
 Mark tasks with `parallel: true` if they can be worked on simultaneously without conflicts.
@@ -201,7 +201,35 @@ Estimated total effort: {sum of hours}
 
 Also update the epic's frontmatter progress if needed (still 0% until tasks actually start).
 
-### 9. Quality Validation
+### 10. Sync Tasks to Taskwarrior
+
+For each task file created:
+1. Extract task details from the file
+2. Create Taskwarrior task using the helper script:
+   ```bash
+   ccpm/scripts/pm/taskwarrior.sh create \
+     "$task_title" \
+     "$project_name" \
+     "$ARGUMENTS" \
+     "$tags"
+   ```
+3. Capture the returned task ID
+4. Update the task file frontmatter with the taskwarrior_id
+
+Example:
+```bash
+task_id=$(ccpm/scripts/pm/taskwarrior.sh create \
+  "Implement user login" \
+  "myapp" \
+  "$ARGUMENTS" \
+  "+feature")
+
+# Update the task file with the taskwarrior_id
+sed -i "s/taskwarrior_id: .*/taskwarrior_id: $task_id/" \
+  .claude/epics/$ARGUMENTS/{number}.md
+```
+
+### 11. Quality Validation
 
 Before finalizing tasks, verify:
 - [ ] All tasks have clear acceptance criteria
@@ -218,7 +246,7 @@ After successfully creating tasks:
    - Total tasks created
    - Parallel vs sequential breakdown
    - Total estimated effort
-3. Suggest next step: "Ready to sync to GitHub? Run: /pm:epic-sync $ARGUMENTS"
+3. Suggest next step: "Ready to start work? Run: /pm:task-start {task_id}"
 
 ## Error Recovery
 
