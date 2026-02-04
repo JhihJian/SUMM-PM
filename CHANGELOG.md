@@ -1,5 +1,24 @@
 # CCPM Changelog
 
+## [Unreleased]
+
+### Added
+- Taskwarrior integration for local-first task tracking
+- `/pm:task-start` command to begin work on tasks
+- `/pm:task-done` command to mark tasks complete
+- `ccpm/scripts/pm/taskwarrior.sh` helper script for Taskwarrior operations
+- Taskwarrior setup check to init.sh
+
+### Changed
+- `epic-decompose` now syncs tasks to Taskwarrior instead of GitHub
+- `next.sh` uses Taskwarrior when available for task listing
+- Updated README to highlight Taskwarrior as the primary task management system
+- Task files now use `taskwarrior_id` instead of `github` field
+
+### Deprecated
+- GitHub Issues-based commands (issue-start, issue-sync, issue-close, epic-sync)
+- Use Taskwarrior-based commands instead: `/pm:task-start`, `/pm:task-done`
+
 ## [2025-01-24] - Major Cleanup & Issue Resolution Release
 
 ### 🎯 Overview
